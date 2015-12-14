@@ -57,5 +57,12 @@ public class MessageReceiverService extends WearableListenerService {
         if (messageEvent.getPath().equals(ClientPaths.STOP_MEASUREMENT)) {
             stopService(new Intent(this, SensorService.class));
         }
+        if (messageEvent.getPath().equals(ClientPaths.START_AUDIO_RECORD)) {
+            startService(new Intent(this, AudioService.class));
+        }
+        if (messageEvent.getPath().equals(ClientPaths.STOP_AUDIO_RECORD)) {
+            Log.d("Audio", "Call stopService");
+            stopService(new Intent(this, AudioService.class));
+        }
     }
 }

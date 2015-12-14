@@ -47,6 +47,9 @@ public class SensorService extends Service implements SensorEventListener {
     private DeviceClient client;
     private ScheduledExecutorService mScheduler;
 
+    long eventOccuredTimeMilli = -1;
+    long eventOccuredTimeNano = -1;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -256,7 +259,13 @@ public class SensorService extends Service implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        client.sendSensorData(event.sensor.getType(), event.accuracy, event.timestamp, event.values);
+        if (eventOccuredTimeMilli < 0){
+            eventOccuredTimeMilli = System.currentTimeMillis();
+            eventOccuredTimeNano = event.timestamp;
+        }
+        long unixtime = eventOccuredTimeMilli
+                + (event.timestamp - eventOccuredTimeNano) / 1000000;
+        client.sendSensorData(event.sensor.getType(), event.accuracy, unixtime, event.values);
     }
 
 

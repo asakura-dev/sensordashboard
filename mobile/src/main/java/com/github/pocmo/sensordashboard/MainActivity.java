@@ -31,6 +31,7 @@ import com.google.android.gms.wearable.NodeApi;
 import com.squareup.otto.Subscribe;
 
 import java.util.List;
+import android.util.Log;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -72,6 +73,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
 
                 RemoteSensorManager.getInstance(MainActivity.this).addTag(tagnameText);
+            }
+        });
+        findViewById(R.id.audio_record_start).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                remoteSensorManager.startAudioRecord();
+                Log.d("AUDIO","Start Audio Record");
+            }
+        });
+        findViewById(R.id.audio_record_stop).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                remoteSensorManager.stopAudioRecord();
+                Log.d("AUDIO", "STOP Audio Record");
             }
         });
 

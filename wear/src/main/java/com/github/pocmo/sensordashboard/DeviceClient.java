@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.util.SparseLongArray;
+import android.os.ParcelFileDescriptor;
 
 import com.github.pocmo.sensordashboard.shared.DataMapKeys;
 import com.google.android.gms.common.ConnectionResult;
@@ -13,11 +14,15 @@ import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
+import com.google.android.gms.wearable.Asset;
+
 
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.io.FileNotFoundException;
+import java.io.File;
 
 public class DeviceClient {
     private static final String TAG = "SensorDashboard/DeviceClient";
@@ -80,7 +85,6 @@ public class DeviceClient {
             }
         });
     }
-
     private void sendSensorDataInBackground(int sensorType, int accuracy, long timestamp, float[] values) {
         if (sensorType == filterId) {
             Log.i(TAG, "Sensor " + sensorType + " = " + Arrays.toString(values));
@@ -96,6 +100,26 @@ public class DeviceClient {
 
         PutDataRequest putDataRequest = dataMap.asPutDataRequest();
         send(putDataRequest);
+    }
+    public void sendAudioData(final String audio_path){
+        executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                sendAudioDataInBackground(audio_path);
+            }
+        });
+    }
+    private void sendAudioDataInBackground(String audio_path){
+        Asset asset;
+        try {
+            asset = createAssetFrom3gp(audio_path);
+            PutDataMapRequest dataMap = PutDataMapRequest.create("/audio");
+            dataMap.getDataMap().putAsset("test", asset);
+            PutDataRequest putDataRequest = dataMap.asPutDataRequest();
+            send(putDataRequest);
+        } catch (Exception e) {
+
+        }
     }
 
     private boolean validateConnection() {
@@ -117,5 +141,14 @@ public class DeviceClient {
                 }
             });
         }
+    }
+    private static Asset createAssetFrom3gp(String audio_path) throws FileNotFoundException {
+        // creating from Uri doesn't work: gives a ASSET_UNAVAILABLE error
+        //return Asset.createFromUri(Uri.parse(imagePath));
+
+        final File file = new File(audio_path);
+        final ParcelFileDescriptor fd = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY);
+
+        return Asset.createFromFd(fd);
     }
 }

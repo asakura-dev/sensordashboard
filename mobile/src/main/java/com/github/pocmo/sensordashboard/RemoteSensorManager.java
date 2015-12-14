@@ -177,6 +177,22 @@ public class RemoteSensorManager {
             }
         });
     }
+    public void startAudioRecord(){
+        executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                controlMeasurementInBackground(ClientPaths.START_AUDIO_RECORD);
+            }
+        });
+    }
+    public void stopAudioRecord(){
+        executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                controlMeasurementInBackground(ClientPaths.STOP_AUDIO_RECORD);
+            }
+        });
+    }
 
     public void getNodes(ResultCallback<NodeApi.GetConnectedNodesResult> pCallback) {
         Wearable.NodeApi.getConnectedNodes(googleApiClient).setResultCallback(pCallback);

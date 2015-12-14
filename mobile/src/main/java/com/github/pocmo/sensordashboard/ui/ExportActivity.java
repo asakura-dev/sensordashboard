@@ -234,6 +234,7 @@ public class ExportActivity extends AppCompatActivity {
     }
 
 
+
     private void exportTagsFile() {
         mRealm = Realm.getInstance(this);
 

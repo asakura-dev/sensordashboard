@@ -13,6 +13,7 @@ import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.WearableListenerService;
+import com.google.android.gms.wearable.Asset;
 
 import java.util.Arrays;
 
@@ -60,6 +61,12 @@ public class SensorReceiverService extends WearableListenerService {
                         DataMapItem.fromDataItem(dataItem).getDataMap()
                     );
                 }
+                Log.d("Auido", " "+ uri);
+                if (path.equals("/audio")){
+                    unpackAudioData(
+                            DataMapItem.fromDataItem(dataItem).getDataMap()
+                    );
+                }
             }
         }
     }
@@ -72,5 +79,9 @@ public class SensorReceiverService extends WearableListenerService {
         Log.d(TAG, "Received sensor data " + sensorType + " = " + Arrays.toString(values));
 
         sensorManager.addSensorData(sensorType, accuracy, timestamp, values);
+    }
+    private void unpackAudioData(DataMap dataMap){
+        Asset audio = dataMap.getAsset("test");
+        Log.d("Audio", "get audio Success!");
     }
 }
